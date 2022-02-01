@@ -1,0 +1,57 @@
+---
+- name: Ensure a socat
+  yum:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: yes
+  vars:
+    packages:
+     - socat
+  become: yes
+  tags:
+    - setup_port_forward
+
+- name: register minikube ip
+  shell: minikube ip
+  register: minikube_ip
+  tags:
+    - setup_port_forward
+
+- name: register service port
+  shell:  "kubectl get svc -n {{ project_name }} -o jsonpath='{.items[0].spec.ports[0].nodePort}'"
+  register: service_node_port
+  tags:
+    - setup_port_forward
+
+- name: update port farword file
+  template:
+    src: run_port_forward.sh.j2
+    dest: "{{ project_path }}/run_port_forward.sh"
+    mode: '0750'
+  tags:
+    - setup_port_forward
+
+- name: debug port farword file
+  shell: cat "{{ project_path }}/run_port_forward.sh"
+  register: pf_file
+  tags:
+    - setup_port_forward
+
+- debug: msg="{{ pf_file.stdout }}"
+
+- name: Create and start listener
+  shell: "./run_port_forward.sh"
+  args:
+    chdir: "{{ project_path }}"
+    executable: /bin/bash
+  tags:
+    - setup_port_forward
+
+- name: verify port open
+  local_action:
+    module: wait_for
+    host: "{{ ansible_host }}"
+    port: "8080"
+    timeout: 1
+
+- debug: msg="port open"

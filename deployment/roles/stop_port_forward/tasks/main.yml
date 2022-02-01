@@ -1,0 +1,11 @@
+---
+- name: register minikube pid
+  shell: ps -ef | grep socat | grep -v grep | tr -s " " | cut -d " " -f 2
+  register: my_pid
+  tags:
+    - stop_port_forward
+
+- name: register service port
+  shell:  "kill -9 {{ my_pid.stdout }}"
+  tags:
+    - stop_port_forward

@@ -1,0 +1,7 @@
+---
+- name: start_test_minikube_app
+  hosts: minikube
+  gather_facts: True
+
+  roles:
+    - setup_port_forward

@@ -1,0 +1,9 @@
+---
+- name: deploy minikube on remote
+  hosts: "minikube"
+  gather_facts: True
+
+  roles:
+    - setup_docker_compose
+    - setup_helm_kubectl
+    - deploy_minikube

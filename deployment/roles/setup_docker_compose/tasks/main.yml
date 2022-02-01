@@ -1,0 +1,73 @@
+---
+- name: Update all packages
+  yum:
+    name: '*'
+    state: latest
+    update_only: yes
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: Ensure a list of yum packages are installed
+  yum:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: yes
+  vars:
+    packages:
+     - amazon-linux-extras
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: Add extras repository
+  shell: yum-config-manager --enable extras
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: Install docker via amazon-linux-extras packages
+  shell: "amazon-linux-extras install docker -y"
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: Enable Docker CE service at startup
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: enable docker for user
+  shell: "groupadd docker || echo 'docker group exists'"
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: enable docker for user
+  shell: "usermod -aG docker ec2-user"
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: Install docker-compose
+  shell: "curl -L \"https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose"
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: Make executable docker-compose
+  shell: "chmod +x /usr/local/bin/docker-compose"
+  become: yes
+  tags:
+    - setup_docker_compose
+
+- name: SLink docker-compose
+  shell: "ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose || echo exists"
+  become: yes
+  tags:
+    - setup_docker_compose
+

@@ -1,0 +1,11 @@
+---
+- name: Deploy web app
+  hosts: "jenkins"
+  become: yes
+  gather_facts: True
+
+  roles:
+   - setup_docker_compose
+   - setup_jenkins
+   - deploy_compose
+

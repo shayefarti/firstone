@@ -1,0 +1,9 @@
+---
+- name: deploy minikube on remote
+  hosts: minikube
+  gather_facts: True
+
+  roles:
+    - copy_image
+    - copy_helm_chart
+    - deploy_app

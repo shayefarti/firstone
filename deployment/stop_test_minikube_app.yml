@@ -1,0 +1,7 @@
+---
+- name: stop_test_minikube_app
+  hosts: minikube
+  gather_facts: True
+
+  roles:
+    - stop_port_forward
