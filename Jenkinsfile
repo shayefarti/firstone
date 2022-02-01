@@ -1,5 +1,4 @@
 pipeline {
-    ehco "START"
     agent any
 
     options {
@@ -17,7 +16,6 @@ pipeline {
                     env['PROJ_PATH'] = "greet-demo"
                     def inventory = readFile file: 'deployment/inventory'
                     def get_ip = "${inventory}" =~ /(?sm).*minideploy ansible_host=((?:(?:\d+)\.?){4}).*/
-                    input "stop"
                     echo get_ip
                     env['SERVER_IP'] = get_ip[0][1]
                     // Remove matcher object so it wont be serialized at the end of scope
