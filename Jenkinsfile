@@ -1,5 +1,6 @@
 pipeline {
     ehco "START"
+    input "stop"
     agent any
 
     options {
