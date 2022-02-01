@@ -1,5 +1,5 @@
 pipeline {
-
+    ehco "START"
     agent any
 
     options {
@@ -14,7 +14,6 @@ pipeline {
                 script {
                     def pom = readMavenPom file: 'pom.xml'
                     env['PROJ'] = pom.artifactId
-
                     env['PROJ_PATH'] = "greet-demo"
                     def inventory = readFile file: 'deployment/inventory'
                     def get_ip = "${inventory}" =~ /(?sm).*minideploy ansible_host=((?:(?:\d+)\.?){4}).*/
