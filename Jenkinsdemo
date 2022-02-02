@@ -15,8 +15,7 @@ pipeline {
                     env['PROJ'] = pom.artifactId
                     env['PROJ_PATH'] = "greet-demo"
                     def inventory = readFile file: 'deployment/inventory'
-                    def get_ip = "${inventory}" =~ "/(?sm).*minideploy ansible_host=((?:(?:\d+)\.?){4}).*/"
-                    echo get_ip
+                    def get_ip = "${inventory}" =~ /(?sm).*minideploy ansible_host=((?:(?:\d+)\.?){4}).*/
                     env['SERVER_IP'] = get_ip[0][1]
                     // Remove matcher object so it wont be serialized at the end of scope
                     // And a cps exception will be thrown
