@@ -1,9 +1,28 @@
 pipeline {
-    agent { docker { image 'ruby:3.0.3-alpine' } }
+    agent any
+
+    options {
+        ansiColor('xterm')
+        disableConcurrentBuilds()
+    }
+
     stages {
-        stage('build') {
+        // Stage conf to setup environment variable for build
+        stage("conf") {
             steps {
-                sh 'ruby --version'
+                script {
+                    def pom = readMavenPom file: 'pom.xml'
+                    env['PROJ'] = pom.artifactId
+                    env['PROJ_PATH'] = "greet-demo"
+                    def inventory = readFile file: 'deployment/inventory'
+                    def get_ip = "${inventory}" =~ /(?sm).*minideploy ansible_host=((?:(?:\d+)\.?){4}).*/
+                    echo get_ip
+                    env['SERVER_IP'] = get_ip[0][1]
+                    // Remove matcher object so it wont be serialized at the end of scope
+                    // And a cps exception will be thrown
+                    get_ip = null
+                    sh 'env'
+                }
             }
         }
     }
